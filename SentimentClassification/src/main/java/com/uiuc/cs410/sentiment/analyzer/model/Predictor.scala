@@ -77,21 +77,53 @@ class Predictor(context: SparkContext, method: String) {
   }
   
     def classifyText(text: String):  TextAnalysis = {
-     println("Classifying text: "+text)
-//     val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(text, true)
-     //val featuresVector = TweetParser.generateWordCountVector(cleanedTweetTokens)
+//     println("Classifying text: "+text)
 
+     if(predictionMethod!="stanford"){
+       val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(text, true)
+       val featuresVector = TweetParser.generateWordCountVector(cleanedTweetTokens)
+       var probabilitiesVector = model.predictProbabilities(featuresVector)
+       val naiveBeyesScore = gradeTextSentiment(probabilitiesVector);
+       println("NaiveBeyes score = "+naiveBeyesScore)
+//       println("")
      
-     val tuple = StanfordNLPScorer.scoreText(text)
-     var stanfordNLPScore = tuple._1
-     var map : HashMap[String, Double] = tuple._2
+       var analysis = new TextAnalysis()
+       analysis.text(text)
+       .score(naiveBeyesScore)
+       .probabilities(probabilitiesVector)
+     }
+     else{
+       val tuple = StanfordNLPScorer.scoreText(text)
+       var stanfordNLPScore = tuple._1
+       var map : HashMap[String, Double] = tuple._2
      
-     println("Stanford score = "+stanfordNLPScore)
-     println("")
-     var analysis = new TextAnalysis()
-     analysis.text(text)
-       .score(stanfordNLPScore)
-       .setCounts(map)
+       println("Stanford score = "+stanfordNLPScore)
+//       println("")
+       var analysis = new TextAnalysis()
+       analysis.text(text)
+         .score(stanfordNLPScore)
+         .setCounts(map)
+     }
+  }
+  
+  private[this] def gradeTextSentiment(probabilities: Vector): Double = {
+    val neg = probabilities(0)
+    val mid = probabilities(1)
+    val pos = probabilities(2)
+    if(neg > 0.5)
+    {
+      return 1.0
+    }
+    else if(pos > 0.5)
+    {
+      if(pos>0.90)
+        return 4.0
+      return 3.0
+    }
+    else
+    {
+      return 2.0
+    }
   }
   
   private[this] def gradeSentiment(probabilities: Vector): Integer = {
