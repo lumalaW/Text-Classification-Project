@@ -36,9 +36,8 @@ object SentimentTester {
     
     var count = 0
     
-    unscoredExamples.foreach { example =>
+    unscoredExamples.slice(0,1000).foreach { example =>
       println("Example "+count)
-      println("True score = "+example.score)
       var tuple = scoreBoth(example.text, stanfordCorePredictor, naiveBayesPredictor)
       println("True score = "+example.score)
       var scored = new TextSentimentResult()
@@ -85,11 +84,15 @@ object SentimentTester {
     
     var correctStanford = 0.0
     var tooLowStanford = 0.0
+    var muchTooLowStanford = 0.0
     var tooHighStanford = 0.0
+    var muchTooHighStanford = 0.0
     
     var correctNaiveBayes = 0.0
     var tooLowNaiveBayes = 0.0
+    var muchTooLowNaiveBayes = 0.0
     var tooHighNaiveBayes = 0.0
+    var muchTooHighNaiveBayes = 0.0
     
     var totalExamples = 0.0
     
@@ -97,31 +100,51 @@ object SentimentTester {
       totalExamples += 1.0
       if(result.score.toDouble == result.stanfordPrediction)
         correctStanford+=1.0
-      else if(result.score.toDouble > result.stanfordPrediction)
+      else if(result.score.toDouble > result.stanfordPrediction){
         tooLowStanford+=1.0
-      else
+        if(result.score.toDouble - result.stanfordPrediction > 1)
+          muchTooLowStanford+=1.0
+      }
+      else{
         tooHighStanford+=1.0
+        if(result.stanfordPrediction - result.score.toDouble > 1)
+          muchTooHighStanford+=1.0
+      }
       if(result.score.toDouble == result.naiveBayesPrediction)
         correctNaiveBayes+=1.0
-      else if(result.score.toDouble > result.stanfordPrediction)
+      else if(result.score.toDouble > result.naiveBayesPrediction){
         tooLowNaiveBayes+=1.0
-      else
+        if(result.score.toDouble - result.naiveBayesPrediction > 1)
+          muchTooLowNaiveBayes+=1.0
+      }
+      else{
         tooHighNaiveBayes+=1.0
+        if(result.naiveBayesPrediction - result.score.toDouble > 1)
+          muchTooHighNaiveBayes+=1.0
+      }
     }
     
     println("Stanford CoreNLP Accuracy: "+correctStanford/totalExamples)
     println("     "+correctStanford.toInt+"/"+totalExamples.toInt)
     println("Stanford CoreNLP Scores Too Highly: "+tooHighStanford/totalExamples)
     println("     "+tooHighStanford.toInt+"/"+totalExamples.toInt)
+    println("Stanford CoreNLP Scores Much Too Highly: "+muchTooHighStanford/totalExamples)
+    println("     "+muchTooHighStanford.toInt+"/"+totalExamples.toInt)
     println("Stanford CoreNLP Scores Too Low: "+tooLowStanford/totalExamples)
     println("     "+tooLowStanford.toInt+"/"+totalExamples.toInt)
+    println("Stanford CoreNLP Scores Much Too Low: "+muchTooLowStanford/totalExamples)
+    println("     "+muchTooLowStanford.toInt+"/"+totalExamples.toInt)
     println("")
     println("NaiveBayes Accuracy: "+correctNaiveBayes/totalExamples)
     println("     "+correctNaiveBayes.toInt+"/"+totalExamples.toInt)
     println("NaiveBayes Scores Too Highly: "+tooHighNaiveBayes/totalExamples)
     println("     "+tooHighNaiveBayes.toInt+"/"+totalExamples.toInt)
+    println("NaiveBayes Scores Much Too Highly: "+muchTooHighNaiveBayes/totalExamples)
+    println("     "+muchTooHighNaiveBayes.toInt+"/"+totalExamples.toInt)
     println("NaiveBayes Scores Too Low: "+tooLowNaiveBayes/totalExamples)
     println("     "+tooLowNaiveBayes.toInt+"/"+totalExamples.toInt)
+    println("NaiveBayes Scores Much Too Low: "+muchTooLowNaiveBayes/totalExamples)
+    println("     "+muchTooLowNaiveBayes.toInt+"/"+totalExamples.toInt)
     println("")
     
   }
