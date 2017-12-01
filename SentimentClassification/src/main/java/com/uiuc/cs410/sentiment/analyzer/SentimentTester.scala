@@ -137,6 +137,7 @@ object SentimentTester {
       //we got it wrong
       else {
         if(result.score.toDouble > result.stanfordPrediction){
+            tooLowStanford+=1.0
             if(result.score.toDouble - result.stanfordPrediction > 1)
               muchTooLowStanford+=1.0
         }
@@ -168,11 +169,12 @@ object SentimentTester {
       //we got it wrong
       else {
         if(result.score.toDouble > result.naiveBayesPrediction){
+            tooLowNaiveBayes+=1.0
             if(result.score.toDouble - result.naiveBayesPrediction > 1)
               muchTooLowNaiveBayes+=1.0
         }
         else{
-          tooHighStanford+=1.0
+          tooHighNaiveBayes+=1.0
           if(result.naiveBayesPrediction - result.score.toDouble > 1)
             muchTooHighNaiveBayes+=1.0
         }
@@ -220,11 +222,11 @@ object SentimentTester {
     println("Majority Class Count: "+majorityClasscount)
     println("Majority Class Percentage: "+majorityClasscount/totalExamples)
     println("")
-    println("Stanford Majority Predictions: "+stanfordMajCorrect+stanfordMajFalsePos)
+    println("Stanford Majority Predictions: "+(stanfordMajCorrect+stanfordMajFalsePos))
     println("Stanford Majority Precision: "+stanfordMajCorrect.toDouble/(stanfordMajCorrect+stanfordMajFalsePos))
     println("Stanford Majority Recall: "+stanfordMajCorrect.toDouble/(stanfordMajCorrect+stanfordMajFalseNeg))
     println("")
-    println("NaiveBayes Majority Predictions: "+naiveBayesMajCorrect+naiveBayesMajFalsePos)
+    println("NaiveBayes Majority Predictions: "+(naiveBayesMajCorrect+naiveBayesMajFalsePos))
     println("NaiveBayes Majority Precision: "+naiveBayesMajCorrect.toDouble/(naiveBayesMajCorrect+naiveBayesMajFalsePos))
     println("NaiveBayes Majority Recall: "+naiveBayesMajCorrect.toDouble/(naiveBayesMajCorrect+naiveBayesMajFalseNeg))
   }

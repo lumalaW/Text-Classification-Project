@@ -38,18 +38,6 @@ class Predictor(context: SparkContext, method: String) {
      }
   }
   
-  def scoreTweets(tweets: java.util.List[String]): TweetScore = {
-    println("Classifying Multiple Tweets")
-    
-    var score = new TweetScore()
-    val scalaTweets = tweets.asScala.toSet
-    scalaTweets.foreach { tweet =>  
-      var analysis = classifySentiment(tweet)
-      score.addTweet(analysis)
-    }
-    score
-  }
-  
   def classifySentiment(tweetText: String):  TweetAnalysis = {
      println("Classifying tweet: "+tweetText)
      val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(tweetText, true)
@@ -104,6 +92,18 @@ class Predictor(context: SparkContext, method: String) {
          .score(stanfordNLPScore)
          .setCounts(map)
      }
+  }
+    
+  def scoreTweets(tweets: java.util.List[String]): TweetScore = {
+    println("Classifying Multiple Tweets")
+    
+    var score = new TweetScore()
+    val scalaTweets = tweets.asScala.toSet
+    scalaTweets.foreach { tweet =>  
+      var analysis = classifySentiment(tweet)
+      score.addTweet(analysis)
+    }
+    score
   }
   
   private[this] def gradeTextSentiment(probabilities: Vector): Double = {
