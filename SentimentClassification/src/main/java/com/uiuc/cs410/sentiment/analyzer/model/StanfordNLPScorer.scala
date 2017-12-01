@@ -8,7 +8,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations
 import edu.stanford.nlp.util.CoreMap
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations
-import com.uiuc.cs410.sentiment.analyzer.TweetParser;
+import com.uiuc.cs410.sentiment.analyzer.TextParser;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ object StanfordNLPScorer {
   }
   
   def scoreTweet(tweetText: String): Int = {
-    val cleanedTweet = TweetParser.cleanTweet(tweetText, true)
+    val cleanedTweet = TextParser.cleanText(tweetText, true)
     val document: edu.stanford.nlp.pipeline.Annotation = new edu.stanford.nlp.pipeline.Annotation(cleanedTweet)
     stanfordPipeline.annotate(document)   
     var sentiment:Double = 0.0

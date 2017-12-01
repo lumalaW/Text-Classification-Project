@@ -13,7 +13,7 @@ package com.uiuc.cs410.sentiment.analyzer.model
  import java.util.Enumeration;
  import java.net.URL;
  
- import com.uiuc.cs410.sentiment.analyzer.TweetParser;
+ import com.uiuc.cs410.sentiment.analyzer.TextParser;
  
 object ModelTrainer {
   
@@ -44,8 +44,8 @@ object ModelTrainer {
      val labeledRdd = tweetDataFrame.select("sentiment","text").rdd
         .map{ //turn the tweet text into features
           case Row(sentiment: String, text:String) =>
-            val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(text)
-            val featuresVector = TweetParser.generateWordCountVector(cleanedTweetTokens)
+            val cleanedTweetTokens = TextParser.cleanAndTokenizeText(text)
+            val featuresVector = TextParser.generateWordCountVector(cleanedTweetTokens)
             var sentimentDouble = 0.0
             if(sentiment.equalsIgnoreCase("positive"))
                 sentimentDouble=1.0
@@ -53,7 +53,7 @@ object ModelTrainer {
                 sentimentDouble=(-1.0)
             LabeledPoint(sentimentDouble, featuresVector)
           case _ =>
-            LabeledPoint(0.0, TweetParser.generateWordCountVector("".split("\0")))
+            LabeledPoint(0.0, TextParser.generateWordCountVector("".split("\0")))
      }
         
     val model = NaiveBayes.train(labeledRdd, lambda=1.0, modelType="multinomial")
@@ -73,35 +73,26 @@ object ModelTrainer {
     }
         
     println("training model from TSV file")
-    
-    
-      var sqlContext = SQLContext.getOrCreate(context)
-      var tweetDataFrame = sqlContext.read
+   
+    var sqlContext = SQLContext.getOrCreate(context)
+    var textDataFrame = sqlContext.read
         .format("com.databricks.spark.csv")
         .option("delimiter", "\t")
         .load(tsvFile)
         .toDF("PhraseId","SentenceId","Phrase","Sentiment")
         
-        //.load(tsvFile)
-        
-      val header = tweetDataFrame.first()
-      tweetDataFrame = tweetDataFrame.filter(row => row != header)
+      val header = textDataFrame.first()
+      textDataFrame = textDataFrame.filter(row => row != header)
 
-      val labeledRdd = tweetDataFrame.select("Phrase","Sentiment").rdd
-        .map{ //turn the tweet text into features
+      val labeledRdd = textDataFrame.select("Phrase","Sentiment").rdd
+        .map{ //turn the text into features
           case Row(phrase:String, sentiment: String) =>
-            val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(phrase)
-            val featuresVector = TweetParser.generateWordCountVector(cleanedTweetTokens)
+            val cleanedTextTokens = TextParser.cleanAndTokenizeText(phrase)
+            val featuresVector = TextParser.generateWordCountVector(cleanedTextTokens)
             var sentimentDouble = sentiment.toDouble
-            if(sentimentDouble > 2)
-              sentimentDouble=1.0
-            else if(sentimentDouble<2)
-               sentimentDouble=(-1.0)
-            else
-              sentimentDouble=0.0
             LabeledPoint(sentimentDouble, featuresVector)
           case _ =>
-            LabeledPoint(0.0, TweetParser.generateWordCountVector("".split("\0")))
+            LabeledPoint(0.0, TextParser.generateWordCountVector("".split("\0")))
       }
         
       val model = NaiveBayes.train(labeledRdd, lambda=1.0, modelType="multinomial")

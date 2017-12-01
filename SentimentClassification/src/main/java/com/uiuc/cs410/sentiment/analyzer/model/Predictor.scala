@@ -5,7 +5,7 @@ import org.apache.spark.mllib.classification.NaiveBayesModel
 import org.apache.spark.mllib.linalg.Vector
 import scala.collection.JavaConverters._
 
-import com.uiuc.cs410.sentiment.analyzer.TweetParser;
+import com.uiuc.cs410.sentiment.analyzer.TextParser;
 import com.uiuc.cs410.sentiment.analyzer.busobj.TweetAnalysis
 import com.uiuc.cs410.sentiment.analyzer.busobj.TextAnalysis
 import com.uiuc.cs410.sentiment.analyzer.busobj.TweetScore
@@ -40,17 +40,17 @@ class Predictor(context: SparkContext, method: String) {
   
   def classifySentiment(tweetText: String):  TweetAnalysis = {
      println("Classifying tweet: "+tweetText)
-     val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(tweetText, true)
-     val featuresVector = TweetParser.generateWordCountVector(cleanedTweetTokens)
+     val cleanedTweetTokens = TextParser.cleanAndTokenizeText(tweetText, true)
+     val featuresVector = TextParser.generateWordCountVector(cleanedTweetTokens)
 
      if(predictionMethod!="stanford"){
        var probabilitiesVector = model.predictProbabilities(featuresVector)
-     val naiveBeyesScore = gradeSentiment(probabilitiesVector);
-     println("NaiveBeyes score = "+naiveBeyesScore)
-     println("")
+       val naiveBeyesScore = gradeSentiment(probabilitiesVector);
+       println("NaiveBeyes score = "+naiveBeyesScore)
+       println("")
      
-     var analysis = new TweetAnalysis()
-     analysis.tweetText(tweetText)
+       var analysis = new TweetAnalysis()
+       analysis.tweetText(tweetText)
        .score(naiveBeyesScore)
        .probabilities(probabilitiesVector)
      }
@@ -65,15 +65,13 @@ class Predictor(context: SparkContext, method: String) {
   }
   
     def classifyText(text: String):  TextAnalysis = {
-//     println("Classifying text: "+text)
 
      if(predictionMethod!="stanford"){
-       val cleanedTweetTokens = TweetParser.cleanAndTokenizeTweet(text, true)
-       val featuresVector = TweetParser.generateWordCountVector(cleanedTweetTokens)
+       val cleanedTweetTokens = TextParser.cleanAndTokenizeText(text, true)
+       val featuresVector = TextParser.generateWordCountVector(cleanedTweetTokens)
        var probabilitiesVector = model.predictProbabilities(featuresVector)
        val naiveBeyesScore = gradeTextSentiment(probabilitiesVector);
        println("NaiveBeyes score = "+naiveBeyesScore)
-//       println("")
      
        var analysis = new TextAnalysis()
        analysis.text(text)
@@ -107,23 +105,21 @@ class Predictor(context: SparkContext, method: String) {
   }
   
   private[this] def gradeTextSentiment(probabilities: Vector): Double = {
-    val neg = probabilities(0)
-    val mid = probabilities(1)
-    val pos = probabilities(2)
-    if(neg > 0.5)
-    {
+    val very_neg = probabilities(0)
+    val neg = probabilities(1)
+    val neutral = probabilities(2)
+    val pos = probabilities(3)
+    val very_pos = probabilities(4)
+    
+    if(very_neg > 0.5)
+      return 0.0
+    if(neg >0.5)
       return 1.0
-    }
-    else if(pos > 0.5)
-    {
-      if(pos>0.90)
-        return 4.0
+    if(pos > 0.5)
       return 3.0
-    }
-    else
-    {
-      return 2.0
-    }
+    if(very_pos > 0.5)
+      return 4.0
+    return 2.0
   }
   
   private[this] def gradeSentiment(probabilities: Vector): Integer = {

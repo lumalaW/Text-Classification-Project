@@ -4,7 +4,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.feature.HashingTF
 import com.uiuc.cs410.sentiment.analyzer.WordCounter
 
-object TweetParser {
+object TextParser {
   
   val stopwords = List[String]("i","me","my","myself","we","our","ours","ourselves","you","your","yours","yourself","yourselves","he","him",
       "his","himself","she","her","hers","herself","it","its","itself","hey","them","their","theirs","themselves","what","which","who","whom",
@@ -14,7 +14,7 @@ object TweetParser {
       "then","once","here","there","when","where","why","how","all","any","both","each","few","more","most","other","some","such","no",
       "nor","not","only","own","same","so","than","too","very","s","t","can","will","just","don","should","now")
       
-  def cleanAndTokenizeTweet(text: String, countWords:Boolean = false): Seq[String] = {
+  def cleanAndTokenizeText(text: String, countWords:Boolean = false): Seq[String] = {
     var tokens : Seq[String] = text.toLowerCase()
       .replaceAll("@\\w+", "")
       .replaceAll("#\\w+", "")
@@ -32,8 +32,8 @@ object TweetParser {
      vectorGenerator.transform(tweetTokens)
   }
   
-  def cleanTweet(text: String,countWords:Boolean = false): String = {
-    var tokens = cleanAndTokenizeTweet(text, countWords)
+  def cleanText(text: String,countWords:Boolean = false): String = {
+    var tokens = cleanAndTokenizeText(text, countWords)
     var cleaned = ""
     
     tokens.foreach { x => {
