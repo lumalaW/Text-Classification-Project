@@ -28,7 +28,12 @@ public class EmailSentimentRouter {
 		
 		//Initialize
 		EmailSentimentRouter router = new EmailSentimentRouter();
-		router.init();
+		try {
+			router.init();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 
 		List<Email> emails = router.checkForEmails();
 		for(Email email: emails){
@@ -38,7 +43,7 @@ public class EmailSentimentRouter {
 		
 	}
 	
-	private void init(){
+	private void init() throws IOException{
 		
 		this.propertyHandler = new PropertyHandler();
 		

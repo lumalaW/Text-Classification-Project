@@ -1,12 +1,18 @@
 package com.uiuc.cs410.sentiment.props;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 public class PropertyHandler {
 
 	private static final String GENERAL_PROPS_FILE = "conf/general.properties";
+	private static final String GENERAL_PROPS_KEY = "GENERAL";
+	private static final String DIR_EMAIL_LISTS = "conf/emailLists";
 	
 	public static final String SENTIMENT_VERY_NEG = "angry";
 	public static final String SENTIMENT_NEG = "negative";
@@ -28,13 +34,28 @@ public class PropertyHandler {
 			
 	private Map<String, Properties> propertyFiles = new HashMap<>();
 	
+	public PropertyHandler() throws IOException
+	{
+		Properties general = new Properties();
+		try {
+			general.load(new FileReader(GENERAL_PROPS_FILE));
+			propertyFiles.put(GENERAL_PROPS_KEY, general);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}
+	}
 	public String getProperty(String propertyName)
 	{
-		return null;
+		Properties general = propertyFiles.get(GENERAL_PROPS_KEY);
+		return general.getProperty(propertyName);
 	}
 	
-	public String getMailingList(String labelClass, String sentiment, String listLevel){
-		return null;
+	public List<String> getMailingList(String labelClass, String sentiment, String listLevel){
+		List<String> emailList = new ArrayList<>();
+		
+		return emailList;
 	}
 	private Properties loadPropsFile(String name, String path){
 		return null;
