@@ -20,6 +20,7 @@ public class Email {
 	private List<Address> bcc = new ArrayList<Address>();
 	private String subject = "";
 	private String text = "";
+	private String id = "";
 	
 	public Email(MimeMessage message){
 		this.parse(message);
@@ -58,6 +59,7 @@ public class Email {
 	private boolean parse(MimeMessage m){
 		MimeMessageParser parser = new MimeMessageParser(m);
 		try {
+			this.id =parser.getContentIds().iterator().next();
 			this.from = parser.getFrom();
 			this.to = parser.getTo();
 		    this.cc = parser.getCc();
@@ -131,5 +133,13 @@ public class Email {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

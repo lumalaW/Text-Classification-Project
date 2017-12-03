@@ -31,6 +31,7 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
+import com.google.api.services.gmail.model.ModifyMessageRequest;
 
 public class GoogleMailAPIHelper {
 	
@@ -82,11 +83,13 @@ public class GoogleMailAPIHelper {
 		}
 	}
 	
-	public List<Email> fetchEmails() throws IOException{
+	public List<Email> fetchUnreadEmails() throws IOException{
 		
 		List<Email> emails = new ArrayList<>();
 		
-		ListMessagesResponse messageResponse = service.users().messages().list(this.user).execute();
+		List<String> labels = new ArrayList<>();
+		labels.add("UNREAD");
+		ListMessagesResponse messageResponse = service.users().messages().list(this.user).setLabelIds(labels).execute();
         List<Message> messages = messageResponse.getMessages();
         if(messages == null || messages.isEmpty())
         {
@@ -100,7 +103,6 @@ public class GoogleMailAPIHelper {
 				mimeMessage = getMimeMessage(service, user, messageId);
 				Email mail = new Email(mimeMessage);
 				emails.add(mail);
-//				return emails;
 			} 
 			catch (MessagingException e) {
 				e.printStackTrace();
@@ -206,6 +208,13 @@ public class GoogleMailAPIHelper {
     }
     
     public void markMessageAsRead(String messageId){
-    	//TODO: Mark message as read
+		List<String> labels = new ArrayList<>();
+		labels.add("UNREAD");
+    	ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(labels);
+    	try {
+			Message message = service.users().messages().modify(this.user, messageId, mods).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 }

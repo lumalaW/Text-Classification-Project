@@ -63,9 +63,12 @@ public class EmailSentimentRouter {
 		
 		Map<String, List<String>> addressLists = lookupTargetAddresses(documentClass, sentiment);
 		try {
-			forwardEmail(email, addressLists);
-			//TODO: Mark the email as read on Google
-			return true;
+			if(forwardEmail(email, addressLists)){
+				//TODO: Mark the email as read on Google
+				mailHelper.markMessageAsRead(email.getId());
+				return true;
+			}
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -80,7 +83,6 @@ public class EmailSentimentRouter {
 		
 		try {
 			MimeMessage message = mailHelper.createEmail(toList, ccList, bccList, email.getFrom(), email.getSubject(), email.getText());
-//			Email constructedEmail = mailHelper.createMessageWithEmail(message);
 			mailHelper.sendMessage(message);
 			return true;
 		} catch (MessagingException e) {
@@ -96,12 +98,11 @@ public class EmailSentimentRouter {
 	
 	private List<Email> checkForEmails(){
 		try {
-			List<Email> allEmails = mailHelper.fetchEmails();
-			for(Email e: allEmails){
-				System.out.println("############# NEW EMAIL #############");
-				System.out.println(e.toString());
-			}
-			//TODO: filter out emails that we've already processed.
+			List<Email> allEmails = mailHelper.fetchUnreadEmails();
+//			for(Email e: allEmails){
+//				System.out.println("############# NEW EMAIL #############");
+//				System.out.println(e.toString());
+//			}
 			return allEmails;
 		} catch (IOException e) {
 			e.printStackTrace();
