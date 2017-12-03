@@ -37,7 +37,7 @@ object SentimentTester {
     
     var count = 0
     
-    unscoredExamples.slice(0,1000).foreach { example =>
+    unscoredExamples.foreach { example =>
       println("Example "+count)
       var tuple = scoreBoth(example.text, stanfordCorePredictor, naiveBayesPredictor)
       println("True score = "+example.score)
