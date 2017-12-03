@@ -18,7 +18,20 @@ public class PropertyHandler {
 	public static final String LIST_CC="cclist";
 	public static final String LIST_BCC="bcclist";
 	
+	public static final String GOOGLE_MAIL_USER = "inbox.user";
+	public static final String GOOGLE_MAIL_SECRET_FILE = "inbox.secret.file.path";
+	
+	public static final String SERVICE_SENT_CLASS_HOST = "service.sentiment.host";
+	public static final String SERVICE_SENT_CLASS_PORT = "service.sentiment.port";
+	public static final String SERVICE_DOC_CLASS_HOST = "service.document.host";
+	public static final String SERVICE_DOC_CLASS_PORT = "service.document.port";
+			
 	private Map<String, Properties> propertyFiles = new HashMap<>();
+	
+	public String getProperty(String propertyName)
+	{
+		return null;
+	}
 	
 	public String getMailingList(String labelClass, String sentiment, String listLevel){
 		return null;

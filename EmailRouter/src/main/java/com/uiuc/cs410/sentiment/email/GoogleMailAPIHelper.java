@@ -71,10 +71,10 @@ public class GoogleMailAPIHelper {
     private Gmail service = null;
     private String user;
 	
-	public GoogleMailAPIHelper(String user){
+	public GoogleMailAPIHelper(String user, String secretPath){
 		try {
 			this.user = user;
-			this.service = getGmailService();
+			this.service = getGmailService(secretPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -124,7 +124,7 @@ public class GoogleMailAPIHelper {
      * @return an authorized Credential object.
      * @throws IOException
      */
-    public static Credential authorize() throws IOException {
+    public static Credential authorize(String secretPath) throws IOException {
         // Load client secrets.
         InputStream in =
             new FileInputStream("C:\\CS410\\project\\client_secret.json");
@@ -150,8 +150,8 @@ public class GoogleMailAPIHelper {
      * @return an authorized Gmail client service
      * @throws IOException
      */
-    public static Gmail getGmailService() throws IOException {
-        Credential credential = authorize();
+    public static Gmail getGmailService(String secretPath) throws IOException {
+        Credential credential = authorize(secretPath);
         return new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();

@@ -6,13 +6,20 @@ import java.util.Map;
 
 import com.uiuc.cs410.sentiment.email.Email;
 import com.uiuc.cs410.sentiment.email.GoogleMailAPIHelper;
+import com.uiuc.cs410.sentiment.props.PropertyHandler;
+import com.uiuc.cs410.sentiment.ws.DocumentClassificationWSHelper;
+import com.uiuc.cs410.sentiment.ws.SentimentClassifcationWSHelper;
 
 public class EmailSentimentRouter {
 
-	private GoogleMailAPIHelper mailHelper = new GoogleMailAPIHelper("me");
 	private long lastEmailCheckTime = 0;
 	
 	private long waitTime = 0;
+	
+	private GoogleMailAPIHelper mailHelper = null;
+	private PropertyHandler propertyHandler = null;
+	private DocumentClassificationWSHelper documentClassifier = null;
+	private SentimentClassifcationWSHelper sentimentClassifier = null;
 	
 	public static void main(String[] args){
 		
@@ -29,12 +36,25 @@ public class EmailSentimentRouter {
 	}
 	
 	private void init(){
-		//TODO: Figure out how we're configured
+		
+		this.propertyHandler = new PropertyHandler();
+		
+		String mailUser = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_USER);
+		String secretPath = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_SECRET_FILE);
+		this.mailHelper = new GoogleMailAPIHelper(mailUser, secretPath);
+		
+		String docClassHost = this.propertyHandler.getProperty(PropertyHandler.SERVICE_DOC_CLASS_HOST);
+		String docClassPort = this.propertyHandler.getProperty(PropertyHandler.SERVICE_DOC_CLASS_PORT);
+		this.documentClassifier = new DocumentClassificationWSHelper(docClassHost, docClassPort);
+		
+		String sentClassHost = this.propertyHandler.getProperty(PropertyHandler.SERVICE_SENT_CLASS_HOST);
+		String sentClassPort = this.propertyHandler.getProperty(PropertyHandler.SERVICE_SENT_CLASS_PORT);
+		this.sentimentClassifier = new SentimentClassifcationWSHelper(sentClassHost, sentClassPort);
 	}
 	
 	private void processEmail(Email email){
 		//TODO: Extract text from Email
-		String textBody = "";
+		String textBody = email.getText();
 		
 		String documentClass = classifyDocument(textBody);
 		String sentiment = classifySentiment(textBody);
@@ -46,7 +66,7 @@ public class EmailSentimentRouter {
 	}
 	
 	private void forwardEmail(Email email, Map<String, String> addressList){
-		
+		//TODO: Figure out how to forward
 		
 	}
 	
@@ -70,13 +90,13 @@ public class EmailSentimentRouter {
 	}
 	
 	private String classifyDocument(String text){
-		//TODO: Classify document of Email
-		return null;
+		String classification = documentClassifier.classify(text);
+		return classification;
 	}
 	
 	private String classifySentiment(String text){
-		//TODO: Classify Sentiment of email
-		return null;
+		String classification = sentimentClassifier.classify(text);
+		return classification;
 	}
 	
 	private Map<String, String> lookupTargetAddresses(String documentClassification, String sentimentClassificaiton){
