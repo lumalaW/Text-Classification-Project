@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.uiuc.cs410.sentiment.email.Email;
 import com.uiuc.cs410.sentiment.email.GoogleMailAPIHelper;
 import com.uiuc.cs410.sentiment.props.PropertyHandler;
@@ -52,21 +55,38 @@ public class EmailSentimentRouter {
 		this.sentimentClassifier = new SentimentClassifcationWSHelper(sentClassHost, sentClassPort);
 	}
 	
-	private void processEmail(Email email){
-		//TODO: Extract text from Email
+	private boolean processEmail(Email email){
 		String textBody = email.getText();
 		
 		String documentClass = classifyDocument(textBody);
 		String sentiment = classifySentiment(textBody);
 		
-		Map<String, String> addressLists = lookupTargetAddresses(documentClass, sentiment);
-		forwardEmail(email, addressLists);
-		//TODO: Mark the email as read on Google
+		Map<String, List<String>> addressLists = lookupTargetAddresses(documentClass, sentiment);
+		try {
+			forwardEmail(email, addressLists);
+			//TODO: Mark the email as read on Google
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 	}
 	
-	private void forwardEmail(Email email, Map<String, String> addressList){
-		//TODO: Figure out how to forward
+	private boolean forwardEmail(Email email, Map<String, List<String>> addressList) throws IOException{
+		List<String> toList = addressList.get(PropertyHandler.LIST_TO);
+		List<String> ccList = addressList.get(PropertyHandler.LIST_CC);
+		List<String> bccList = addressList.get(PropertyHandler.LIST_BCC);
+		
+		try {
+			MimeMessage message = mailHelper.createEmail(toList, ccList, bccList, email.getFrom(), email.getSubject(), email.getText());
+//			Email constructedEmail = mailHelper.createMessageWithEmail(message);
+			mailHelper.sendMessage(message);
+			return true;
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 	}
 	
@@ -99,8 +119,13 @@ public class EmailSentimentRouter {
 		return classification;
 	}
 	
-	private Map<String, String> lookupTargetAddresses(String documentClassification, String sentimentClassificaiton){
+	private Map<String, List<String>> lookupTargetAddresses(String documentClassification, String sentimentClassificaiton){
 		//TODO: Look up target addresses
 		return null;
+	}
+	
+	private static void logMessage(String message){
+		
+		System.out.println(message);
 	}
 }

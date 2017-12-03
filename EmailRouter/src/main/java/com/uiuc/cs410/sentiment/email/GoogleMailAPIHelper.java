@@ -1,6 +1,7 @@
 package com.uiuc.cs410.sentiment.email;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.util.Properties;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -110,14 +112,6 @@ public class GoogleMailAPIHelper {
 		return emails;
 	}
 	
-	public void sendEmails(List<Email> emails){
-		for(Email mail : emails)
-			sendEmail(mail);
-	}
-	
-	public void sendEmail(Email email){
-		
-	}
 	
     /**
      * Creates an authorized Credential object.
@@ -170,6 +164,48 @@ public class GoogleMailAPIHelper {
 
   	    return email;
   	 }
+    
+    
+    public MimeMessage createEmail(List<String> to, List<String> cc, List<String> bcc, String from,  String subject, String bodyText) throws MessagingException {
+    		Properties props = new Properties();
+    		Session session = Session.getDefaultInstance(props, null);
 
+    		MimeMessage email = new MimeMessage(session);
 
+    		email.setFrom(new InternetAddress(from));
+    		for(String toAddr: to)
+    			email.addRecipient(javax.mail.Message.RecipientType.TO,new InternetAddress(toAddr));
+    		for(String ccAddr: cc)
+    			email.addRecipient(javax.mail.Message.RecipientType.CC,new InternetAddress(ccAddr));
+    		for(String bccAddr: bcc)
+    			email.addRecipient(javax.mail.Message.RecipientType.BCC,new InternetAddress(bccAddr));
+    		email.setSubject(subject);
+    		email.setText(bodyText);
+    		return email;
+    }
+
+    public Message sendMessage( MimeMessage emailContent) throws MessagingException, IOException {
+    		Message message = createMessageWithEmail(emailContent);
+    		message = this.service.users().messages().send(this.user, message).execute();
+
+    		System.out.println("Message id: " + message.getId());
+    		System.out.println(message.toPrettyString());
+    		return message;
+    }
+   
+    
+    private Message createMessageWithEmail(MimeMessage emailContent)
+            throws MessagingException, IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        emailContent.writeTo(buffer);
+        byte[] bytes = buffer.toByteArray();
+        String encodedEmail = Base64.encodeBase64URLSafeString(bytes);
+        Message message = new Message();
+        message.setRaw(encodedEmail);
+        return message;
+    }
+    
+    public void markMessageAsRead(String messageId){
+    	//TODO: Mark message as read
+    }
 }
