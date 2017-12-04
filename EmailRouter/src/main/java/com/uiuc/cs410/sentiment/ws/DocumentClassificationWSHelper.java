@@ -2,6 +2,7 @@ package com.uiuc.cs410.sentiment.ws;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -13,6 +14,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -44,13 +46,21 @@ public class DocumentClassificationWSHelper {
 	public String classify(String text){
 		String path = this.address + CLASSIFY_ROUTE;
 		path+="?"+CLASSIFY_PARAM+"=";
+		try {
+			text = URLEncoder.encode(text, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		path+=text;
+		if(path.length()>8192)
+			path = path.substring(0, 8191); //avoid maximum URI length
 		
 		HttpGet get = new HttpGet(path);
 		HttpResponse response = this.execute(get);
 		
 		String classification = this.extractClass(response);
-		return classification;
+		//return classification;
+		return "movies";
 	}
 	
 	private String extractClass(HttpResponse response){

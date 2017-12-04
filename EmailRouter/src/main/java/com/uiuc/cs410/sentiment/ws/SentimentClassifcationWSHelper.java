@@ -2,9 +2,12 @@ package com.uiuc.cs410.sentiment.ws;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -18,12 +21,24 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class SentimentClassifcationWSHelper {
 
 	private static final String CLASSIFY_ROUTE="/classify";
 	private static final String CLASSIFY_PARAM="text";
 
+	private static final String LEVEL_ANGRY = "angry";
+	private static final String LEVEL_NEGATIVE = "negative";
+	private static final String LEVEL_NEUTRAL = "neutral";
+	private static final String LEVEL_POSITIVE = "positive";
+	private static final String LEVEL_VERY_POSITIVE="very_positive";
+	
 	private HttpHost i_targetHost = null;
 	private CloseableHttpClient i_httpclient = null;
 	private HttpClientContext i_localContext = null;
@@ -44,7 +59,14 @@ public class SentimentClassifcationWSHelper {
 	public String classify(String text){
 		String path = this.address + CLASSIFY_ROUTE;
 		path+="?"+CLASSIFY_PARAM+"=";
+		try {
+			text = URLEncoder.encode(text, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		path+=text;
+		if(path.length()>8000)
+			path = path.substring(0, 8000); //avoid maximum URI length
 		
 		HttpGet get = new HttpGet(path);
 		HttpResponse response = this.execute(get);
@@ -54,8 +76,30 @@ public class SentimentClassifcationWSHelper {
 	}
 	
 	private String extractClass(HttpResponse response){
-		//TODO: Figure out how to get classification from Response
-		return null;
+		String content = null;
+		HttpEntity responseEntity = response.getEntity();
+		if(responseEntity!=null) {
+		    try {
+				content = EntityUtils.toString(responseEntity);
+//				System.out.println(" Response from Web service "+content);
+				JsonElement root = null;
+				try{
+					root = new JsonParser().parse(content);
+					JsonObject jObject = root.getAsJsonObject();
+					String score = jObject.get("score").toString();
+					return mapSentiment(score);
+					
+				}catch(	JsonSyntaxException je){
+					System.out.println("BOOM");
+					System.out.println("Error parsing Json. Message: "+je.getMessage());
+					
+				}
+			} catch (ParseException | IOException e) {
+				e.printStackTrace();
+				return "neutral"; //return neutral
+			}
+		}
+		return content;
 	}
 	
 	private String buildClassifyURL(String host, String port){
@@ -121,5 +165,18 @@ public class SentimentClassifcationWSHelper {
 			}
 		}
 		return null;
+	}
+	
+	private String mapSentiment(String doubleValue){
+		Double d = Double.parseDouble(doubleValue);
+		if(d>=3.25)
+			return LEVEL_VERY_POSITIVE;
+		if(d>2.25)
+			return LEVEL_POSITIVE;
+		if(d<1.25)
+			return LEVEL_NEGATIVE;
+		if(d<0.75)
+			return LEVEL_ANGRY;
+		return LEVEL_NEUTRAL;
 	}
 }

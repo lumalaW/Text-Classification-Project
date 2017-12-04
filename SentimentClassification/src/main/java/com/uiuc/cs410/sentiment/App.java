@@ -69,7 +69,7 @@ public class App
         	SparkContext sparkContext =SparkContextGenerator.getContextInstance();
             
         	Predictor predictor = new Predictor(sparkContext, method );
-        	predictor.trainModel(MOVIE_REVIEW_DATA, TAB_DELIMITER);
+        	//predictor.trainModel(MOVIE_REVIEW_DATA, TAB_DELIMITER);
             
             TextAnalysis analysis = predictor.classifyText(text);
             return gson.toJson(analysis, TextAnalysis.class);

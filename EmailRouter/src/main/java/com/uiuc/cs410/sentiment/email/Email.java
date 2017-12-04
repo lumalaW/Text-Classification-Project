@@ -21,6 +21,7 @@ public class Email {
 	private String subject = "";
 	private String text = "";
 	private String id = "";
+	private String originalHTMLContent = "";
 	
 	public Email(MimeMessage message){
 		this.parse(message);
@@ -59,14 +60,13 @@ public class Email {
 	private boolean parse(MimeMessage m){
 		MimeMessageParser parser = new MimeMessageParser(m);
 		try {
-//			this.id =parser.getContentIds().iterator().next();
 			this.from = parser.getFrom();
 			this.to = parser.getTo();
 		    this.cc = parser.getCc();
 		    this.bcc = parser.getBcc();
 		    this.subject = parser.getSubject();
-		    String htmlContent = parser.parse().getHtmlContent();
-		    this.text = getBodyText(htmlContent);
+		    this.originalHTMLContent = parser.parse().getHtmlContent();
+		    this.text = getBodyText(this.originalHTMLContent);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,7 +79,15 @@ public class Email {
     	Element body = doc.select("body").first();
     	Elements paragraphs = body.select("p");
     	String text = "";
+    	
     	for(Element p : paragraphs){
+    		if(text.length()>0)
+    			text+="\0";
+    		text += p.text();
+    	}
+    	//add any td text
+    	Elements tds = body.select("td");
+    	for(Element p : tds){
     		if(text.length()>0)
     			text+="\0";
     		text += p.text();
@@ -141,5 +149,13 @@ public class Email {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getOriginalHTMLContent() {
+		return originalHTMLContent;
+	}
+
+	public void setOriginalHTMLContent(String originalHTMLContent) {
+		this.originalHTMLContent = originalHTMLContent;
 	}
 }

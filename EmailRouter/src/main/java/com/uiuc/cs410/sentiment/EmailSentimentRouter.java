@@ -1,7 +1,6 @@
 package com.uiuc.cs410.sentiment;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +16,7 @@ import com.uiuc.cs410.sentiment.ws.SentimentClassifcationWSHelper;
 
 public class EmailSentimentRouter {
 
-	private long lastEmailCheckTime = 0;
-	
-	private long waitTime = 0;
+	private long waitTime = 10000;
 	
 	private GoogleMailAPIHelper mailHelper = null;
 	private PropertyHandler propertyHandler = null;
@@ -38,15 +35,16 @@ public class EmailSentimentRouter {
 			System.exit(-1);
 		}
 
-		logMessage(" Checking for Emails...");
-		List<Email> emails = router.checkForEmails();
-		logMessage(" Received "+emails.size()+" emails.");
-		for(Email email: emails){
-			logMessage(" Processing email "+email.getId());
-			router.processEmail(email);
+		while(true){
+			logMessage("Checking for Emails...");
+			List<Email> emails = router.checkForEmails();
+			logMessage("Received "+emails.size()+" emails.");
+			for(Email email: emails){
+				logMessage("Processing email "+email.getId());
+				router.processEmail(email);
+			}
+			router.waitForInterval(router.waitTime);
 		}
-		router.waitForInterval(router.waitTime);
-		
 	}
 	
 	private void init() throws IOException{
@@ -55,8 +53,6 @@ public class EmailSentimentRouter {
 		
 		String mailUser = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_USER);
 		String secretPath = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_SECRET_FILE);
-		System.out.println("mailUser="+mailUser);
-		System.out.println("secretPath="+secretPath);
 		this.mailHelper = new GoogleMailAPIHelper(mailUser, secretPath);
 		
 		String docClassHost = this.propertyHandler.getProperty(PropertyHandler.SERVICE_DOC_CLASS_HOST);
@@ -70,21 +66,23 @@ public class EmailSentimentRouter {
 	
 	private boolean processEmail(Email email){
 		String textBody = email.getText();
+		logMessage("Text to classify: "+textBody);
+		logMessage(" ");
 		
-		logMessage(" Classifying document type...");
+		logMessage("Classifying document type...");
 		String documentClass = classifyDocument(textBody);
-		logMessage(" Document classification: "+documentClass);
-		logMessage(" Classifying sentiment...");
+		logMessage("Document classification: "+documentClass);
+		logMessage("Classifying sentiment...");
 		String sentiment = classifySentiment(textBody);
-		logMessage(" Sentiment classification: "+sentiment);
+		logMessage("Sentiment classification: "+sentiment);
 		
 		Map<String, List<String>> addressLists = lookupTargetAddresses(documentClass, sentiment);
 		try {
-			logMessage(" Forwarding to interested parties...");
+			logMessage("Forwarding to interested parties...");
 			if(forwardEmail(email, addressLists)){
-				logMessage(" Marking email as read...");
+				logMessage("Marking email as read...");
 				mailHelper.markMessageAsRead(email.getId());
-				logMessage(" Complete.");
+				logMessage("Complete.");
 				return true;
 			}
 			return false;
@@ -101,7 +99,7 @@ public class EmailSentimentRouter {
 		List<String> bccList = addressList.get(PropertyHandler.LIST_BCC);
 		
 		try {
-			MimeMessage message = mailHelper.createEmail(toList, ccList, bccList, email.getFrom(), email.getSubject(), email.getText());
+			MimeMessage message = mailHelper.createEmail(toList, ccList, bccList, email.getFrom(), email.getSubject(), email.getOriginalHTMLContent());
 			mailHelper.sendMessage(message);
 			return true;
 		} catch (MessagingException e) {
@@ -112,16 +110,19 @@ public class EmailSentimentRouter {
 	}
 	
 	private void waitForInterval(long waitTime){
-		//TODO: Figure out Sleeping mechanism
+		logMessage("");
+		logMessage("Sleeping for "+(waitTime/(1000.0)+" second"));
+		try {
+			Thread.sleep(waitTime);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		logMessage(" ");
 	}
 	
 	private List<Email> checkForEmails(){
 		try {
 			List<Email> allEmails = mailHelper.fetchUnreadEmails();
-//			for(Email e: allEmails){
-//				System.out.println("############# NEW EMAIL #############");
-//				System.out.println(e.toString());
-//			}
 			return allEmails;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -155,7 +156,6 @@ public class EmailSentimentRouter {
 	}
 	
 	private static void logMessage(String message){
-		
 		System.out.println(message);
 	}
 }

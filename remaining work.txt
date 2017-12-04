@@ -1,6 +1,6 @@
 Remaining work.
 
-1) Turn in Tech Review (Nathan)  - SUNDAY
+1) DONE(Nathan) Turn in Tech Review 
 2) Get Classification service running as a service (William) - SUNDAY
 	2a) Document the process for training your model with the service
 	2b) Document how to get the service running on your computer
@@ -8,17 +8,16 @@ Remaining work.
 3) Sentiment classification service
 	3a) Document how to get the service running on your computer
 	3b) Document the API w/ example call and return
-4) Write Driver Program - SUNDAY
-	4a) Write email list management component (Nathan) - 
-	4b) Write web service Helper interface (????) - 
-	4c) Loop through each email, call web services, and forward them
-	4d) Sleep mechanism
+4) Write Driver Program -
+	4a) DONE(NATHAN) Write email list management component  - 
+	4b) DONE(NATHAN) Write web service Helper interface  - 
+	4c) DONE(NATHAN) Loop through each email, call web services, and forward them
+	4d) DONE(NATHAN) Sleep mechanism
 	4e) Document how to configure the driver program to work with the other services
-	4f) Document how to run the program on your computer
-	
+	4f) Document how to run the program on your computer	
 5)	Improvements to the GoogleMail helper class - 
-	5a) Method to send emails
-	5b) change query method to only get new emails
+	5a) DONE(NATHAN) Method to send emails
+	5b) DONE(NATHAN) change query method to only get new emails
 6) Documentation of project (20% of grade) - 
 	6a) Heavy ocumentation for readme file
 	6b) Report

@@ -17,6 +17,7 @@ object StanfordNLPScorer {
   val stanfordPipeline: StanfordCoreNLP = {
     val properties = new Properties()
     properties.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment")
+    println("Creating a new instance of StanfordCoreNLP");
     new StanfordCoreNLP(properties);
   }
   

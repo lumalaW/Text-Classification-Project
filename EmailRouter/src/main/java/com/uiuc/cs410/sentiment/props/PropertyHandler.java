@@ -41,7 +41,6 @@ public class PropertyHandler {
 		Properties general = new Properties();
 		try {
 			File here = new File(".");
-			System.out.println("Current directory: "+here.getAbsolutePath());
 			general.load(new FileReader(GENERAL_PROPS_FILE));
 			propertyFiles.put(GENERAL_PROPS_KEY, general);
 		} catch (IOException e) {
@@ -59,11 +58,20 @@ public class PropertyHandler {
 	public List<String> getMailingList(String labelClass, String sentiment, String listLevel){
 		Properties classProps = propertyFiles.get(labelClass);
 		if(classProps==null){
-			classProps = loadPropsFile(labelClass, DIR_EMAIL_LISTS);
+			classProps = loadPropsFile(labelClass.trim()+".properties", DIR_EMAIL_LISTS);
 			propertyFiles.put(labelClass, classProps);
 		}
 		List<String> emailList = new ArrayList<>();
+		String list = null;
+		if(listLevel.trim().equalsIgnoreCase(PropertyHandler.LIST_TO))
+			list = classProps.getProperty("tolist."+sentiment);
+		else if(listLevel.trim().equalsIgnoreCase(PropertyHandler.LIST_CC))
+			list = classProps.getProperty("cclist."+sentiment);
+		else if(listLevel.trim().equalsIgnoreCase(PropertyHandler.LIST_BCC))
+			list = classProps.getProperty("bcclist."+sentiment);
 		
+		if(list != null && list.trim().length()>0)
+			emailList = splitEmails(list);
 		return emailList;
 	}
 	
@@ -85,7 +93,6 @@ public class PropertyHandler {
 			String trimmed = emailString.trim();
 			String[] tokens = trimmed.split(";");
 			for(String token : tokens){
-				System.out.println(token.trim());
 				if(token.trim().length()>0)
 					emails.add(token.trim());
 			}

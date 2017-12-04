@@ -90,12 +90,11 @@ public class GoogleMailAPIHelper {
 		
 		List<String> labels = new ArrayList<>();
 		labels.add("UNREAD");
-		//ListMessagesResponse messageResponse = service.users().messages().list(this.user).setLabelIds(labels).execute();
-		ListMessagesResponse messageResponse = service.users().messages().list(this.user).execute();
+		ListMessagesResponse messageResponse = service.users().messages().list(this.user).setLabelIds(labels).execute();
         List<Message> messages = messageResponse.getMessages();
         if(messages == null || messages.isEmpty())
         {
-        	System.out.println("Didn't get any messages!");
+//        	System.out.println("Didn't get any messages!");
         	return emails;
         }
         for(Message m : messages){
@@ -186,7 +185,8 @@ public class GoogleMailAPIHelper {
     		for(String bccAddr: bcc)
     			email.addRecipient(javax.mail.Message.RecipientType.BCC,new InternetAddress(bccAddr));
     		email.setSubject(subject);
-    		email.setText(bodyText);
+    		//email.setText(bodyText);
+    		email.setContent(bodyText, "text/html; charset=utf-8");
     		return email;
     }
 
@@ -194,7 +194,7 @@ public class GoogleMailAPIHelper {
     		Message message = createMessageWithEmail(emailContent);
     		message = this.service.users().messages().send(this.user, message).execute();
 
-    		System.out.println("Message id: " + message.getId());
+    		System.out.println("Sending message id: " + message.getId());
     		System.out.println(message.toPrettyString());
     		return message;
     }
