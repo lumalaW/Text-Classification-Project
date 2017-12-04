@@ -2,6 +2,7 @@ package com.uiuc.cs410.sentiment.email;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,7 +90,8 @@ public class GoogleMailAPIHelper {
 		
 		List<String> labels = new ArrayList<>();
 		labels.add("UNREAD");
-		ListMessagesResponse messageResponse = service.users().messages().list(this.user).setLabelIds(labels).execute();
+		//ListMessagesResponse messageResponse = service.users().messages().list(this.user).setLabelIds(labels).execute();
+		ListMessagesResponse messageResponse = service.users().messages().list(this.user).execute();
         List<Message> messages = messageResponse.getMessages();
         if(messages == null || messages.isEmpty())
         {
@@ -102,6 +104,7 @@ public class GoogleMailAPIHelper {
 			try {
 				mimeMessage = getMimeMessage(service, user, messageId);
 				Email mail = new Email(mimeMessage);
+				mail.setId(messageId);
 				emails.add(mail);
 			} 
 			catch (MessagingException e) {
@@ -122,8 +125,9 @@ public class GoogleMailAPIHelper {
      */
     public static Credential authorize(String secretPath) throws IOException {
         // Load client secrets.
+    	File f = new File(secretPath);
         InputStream in =
-            new FileInputStream("C:\\CS410\\project\\client_secret.json");
+            new FileInputStream(f);
         GoogleClientSecrets clientSecrets =
             GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 

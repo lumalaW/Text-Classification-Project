@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.uiuc.cs498</groupId>
-  <artifactId>TweetNetPromotor</artifactId>
-  <name>TweetNetPromotor</name>
+  <groupId>com.uiuc.cs410</groupId>
+  <artifactId>SentimentAnalyzer</artifactId>
+  <name>SentimentAnalyzer</name>
   <version>0.0.1-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
   <build>
@@ -51,7 +51,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.uiuc.cs498.netpromoter.App</mainClass>
+              <mainClass>com.uiuc.cs410.sentiment.App</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -68,7 +68,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.uiuc.cs498.netpromoter.App</mainClass>
+                  <mainClass>com.uiuc.cs410.sentiment.App</mainClass>
                 </transformer>
               </transformers>
             </configuration>

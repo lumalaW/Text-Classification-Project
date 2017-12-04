@@ -21,7 +21,7 @@ import org.apache.http.impl.client.HttpClients;
 
 public class SentimentClassifcationWSHelper {
 
-	private static final String CLASSIFY_ROUTE="classify";
+	private static final String CLASSIFY_ROUTE="/classify";
 	private static final String CLASSIFY_PARAM="text";
 
 	private HttpHost i_targetHost = null;

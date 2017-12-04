@@ -17,6 +17,7 @@ import com.google.api.services.gmail.Gmail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -78,8 +79,13 @@ public class Quickstart {
      */
     public static Credential authorize() throws IOException {
         // Load client secrets.
+//        InputStream in =
+//            new FileInputStream("C:\\CS410\\project\\client_secret.json");
+        //InputStream in = new FileInputStream("./client_secret.json");
+    	File f = new File("./client_secret.json");
+    	System.out.println("File path = "+f.getAbsolutePath());
         InputStream in =
-            new FileInputStream("C:\\CS410\\project\\client_secret.json");
+            new FileInputStream(f);
         GoogleClientSecrets clientSecrets =
             GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
@@ -144,10 +150,8 @@ public class Quickstart {
 				printMessage(mimeMessage);
 				return;
 			} catch (MessagingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }

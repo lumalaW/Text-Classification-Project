@@ -1,6 +1,8 @@
 package com.uiuc.cs410.sentiment;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,14 +31,18 @@ public class EmailSentimentRouter {
 		//Initialize
 		EmailSentimentRouter router = new EmailSentimentRouter();
 		try {
+			logMessage(" Initializing...");
 			router.init();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
+		logMessage(" Checking for Emails...");
 		List<Email> emails = router.checkForEmails();
+		logMessage(" Received "+emails.size()+" emails.");
 		for(Email email: emails){
+			logMessage(" Processing email "+email.getId());
 			router.processEmail(email);
 		}
 		router.waitForInterval(router.waitTime);
@@ -49,6 +55,8 @@ public class EmailSentimentRouter {
 		
 		String mailUser = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_USER);
 		String secretPath = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_SECRET_FILE);
+		System.out.println("mailUser="+mailUser);
+		System.out.println("secretPath="+secretPath);
 		this.mailHelper = new GoogleMailAPIHelper(mailUser, secretPath);
 		
 		String docClassHost = this.propertyHandler.getProperty(PropertyHandler.SERVICE_DOC_CLASS_HOST);
@@ -63,14 +71,20 @@ public class EmailSentimentRouter {
 	private boolean processEmail(Email email){
 		String textBody = email.getText();
 		
+		logMessage(" Classifying document type...");
 		String documentClass = classifyDocument(textBody);
+		logMessage(" Document classification: "+documentClass);
+		logMessage(" Classifying sentiment...");
 		String sentiment = classifySentiment(textBody);
+		logMessage(" Sentiment classification: "+sentiment);
 		
 		Map<String, List<String>> addressLists = lookupTargetAddresses(documentClass, sentiment);
 		try {
+			logMessage(" Forwarding to interested parties...");
 			if(forwardEmail(email, addressLists)){
-				//TODO: Mark the email as read on Google
+				logMessage(" Marking email as read...");
 				mailHelper.markMessageAsRead(email.getId());
+				logMessage(" Complete.");
 				return true;
 			}
 			return false;
@@ -126,8 +140,18 @@ public class EmailSentimentRouter {
 	}
 	
 	private Map<String, List<String>> lookupTargetAddresses(String documentClassification, String sentimentClassificaiton){
-		//TODO: Look up target addresses
-		return null;
+		
+		List<String> toList = propertyHandler.getMailingList(documentClassification, sentimentClassificaiton, PropertyHandler.LIST_TO);
+		List<String> ccList = propertyHandler.getMailingList(documentClassification, sentimentClassificaiton, PropertyHandler.LIST_CC);
+		List<String> bccList = propertyHandler.getMailingList(documentClassification, sentimentClassificaiton, PropertyHandler.LIST_BCC);
+		
+		
+		Map<String, List<String>> map = new HashMap<>();
+		map.put(PropertyHandler.LIST_TO, toList);
+		map.put(PropertyHandler.LIST_CC, ccList);
+		map.put(PropertyHandler.LIST_BCC, bccList);
+		
+		return map;
 	}
 	
 	private static void logMessage(String message){

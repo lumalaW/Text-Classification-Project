@@ -1,5 +1,7 @@
 package com.uiuc.cs410.sentiment.props;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,9 +12,9 @@ import java.util.Properties;
 
 public class PropertyHandler {
 
-	private static final String GENERAL_PROPS_FILE = "conf/general.properties";
+	private static final String GENERAL_PROPS_FILE = "./conf/general.properties";
 	private static final String GENERAL_PROPS_KEY = "GENERAL";
-	private static final String DIR_EMAIL_LISTS = "conf/emailLists";
+	private static final String DIR_EMAIL_LISTS = "./conf/emailLists";
 	
 	public static final String SENTIMENT_VERY_NEG = "angry";
 	public static final String SENTIMENT_NEG = "negative";
@@ -38,6 +40,8 @@ public class PropertyHandler {
 	{
 		Properties general = new Properties();
 		try {
+			File here = new File(".");
+			System.out.println("Current directory: "+here.getAbsolutePath());
 			general.load(new FileReader(GENERAL_PROPS_FILE));
 			propertyFiles.put(GENERAL_PROPS_KEY, general);
 		} catch (IOException e) {
@@ -53,11 +57,39 @@ public class PropertyHandler {
 	}
 	
 	public List<String> getMailingList(String labelClass, String sentiment, String listLevel){
+		Properties classProps = propertyFiles.get(labelClass);
+		if(classProps==null){
+			classProps = loadPropsFile(labelClass, DIR_EMAIL_LISTS);
+			propertyFiles.put(labelClass, classProps);
+		}
 		List<String> emailList = new ArrayList<>();
 		
 		return emailList;
 	}
+	
 	private Properties loadPropsFile(String name, String path){
-		return null;
+		Properties p = new Properties();
+		try {
+			p.load(new FileInputStream(path+"/"+name));
+			return p;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	private List<String> splitEmails(String emailString){
+		List<String> emails = new ArrayList<>();
+		if(emailString!=null && emailString.trim().length()>0){
+			String trimmed = emailString.trim();
+			String[] tokens = trimmed.split(";");
+			for(String token : tokens){
+				System.out.println(token.trim());
+				if(token.trim().length()>0)
+					emails.add(token.trim());
+			}
+		}
+		return emails;
 	}
 }
