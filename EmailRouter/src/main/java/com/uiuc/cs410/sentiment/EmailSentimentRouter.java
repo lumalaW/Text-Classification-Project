@@ -36,7 +36,7 @@ public class EmailSentimentRouter {
 		}
 
 		while(true){
-			logMessage("Checking for Emails...");
+			logMessage("Checking for Unread Emails...");
 			List<Email> emails = router.checkForEmails();
 			logMessage("Received "+emails.size()+" emails.");
 			for(Email email: emails){
