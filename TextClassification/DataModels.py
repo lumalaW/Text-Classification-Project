@@ -1,5 +1,12 @@
 # Building and evaluating models
-from DataAnalysis import X_train_dtm, y_train, X_test_dtm, y_test, X_cv_dtm, y
+from TextClassification import DataAnalysis
+
+X_train_dtm = DataAnalysis.X_train_dtm
+y_train = DataAnalysis.y_train
+X_test_dtm = DataAnalysis.X_test_dtm
+y_test = DataAnalysis.y_test
+X_cv_dtm = DataAnalysis.X_cv_dtm
+y = DataAnalysis.y
 
 # Naive Bayes Algorithm
 print("Naive Bayes algorithm")
@@ -24,7 +31,7 @@ from sklearn.linear_model import LogisticRegression
 logreg = LogisticRegression()
 logreg.fit(X_train_dtm, y_train)
 
-# Preictions
+# Predictions
 y_predictions = logreg.predict(X_test_dtm)
 
 # Accuracy
