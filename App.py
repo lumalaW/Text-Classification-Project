@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import json
 
-from TextClassification.Classify import classify
+from TextClassification.Classify import classify, train_model
 import TextClassification.CollectExamples as collector
 
 app = Flask(__name__)
@@ -29,7 +29,6 @@ def classifyText():
 		ret['status']='failed'
 		ret['message']='text parameter is required'
 		return json.dumps(ret)
-	print("About to classify...")
 	category = classify(text)
 	print("Classification done: ", category)
 	ret['status']='success'
@@ -50,9 +49,9 @@ def train():
 		ret['status']='failed'
 		ret['message']='Unable to parse sample documents. Training aborted.'
 		return json.dumps(ret)
-	#TODO: train model again
-	#TODO: pass it in to some other method
+	message = train_model(target_data_csv, target_labels_csv)
 	ret['labels']=labels
+	ret['message']=message
 	return json.dumps(ret)
 
 if __name__ == "__main__":
