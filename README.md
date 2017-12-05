@@ -6,7 +6,9 @@ To perform topic categorization, users must provide the tool  of the tool may de
 
 ## Sentiment Classification Service
 
-## Document Classification Service 
+## Document Classification Service
+The text classification was done using the Scikit-learn. Initially released in 2007, Scikit-learn is a free software machine learning
+library for the Python programming language. 
 
 ### Training the Service
 
