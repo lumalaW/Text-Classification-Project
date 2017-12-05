@@ -1,0 +1,5 @@
+The operating system is still not finished and it takes more than 10 minutes to establish a wi-fi connection. Whether at home or at the office or a public hot spot I find myself waiting for up to 15 minutes to get a WiFi data connection. Apple tech support people are clueless about networking devices and have recommended deleting all network connections which did not help or doing a full reset of the phone which wasted 2 days to download everything all over again and still did not help.
+
+Updates are more than 1GB for the operating system and over 2GB for iTunes which is needed to do any sort of backup from the iPhone to a computer and Apple's trying to force everything through iTunes is as dumb a design as Microsoft's reliance on the registry.
+
+Strongly recommend buying an Android OS based smartphone like the Pixel from Google. The Apple smartphone operating system leaves a lot to be desired if you want to connect to the internet or a local LAN and not rely 100% on cellular data with its high cost and slow speeds.
