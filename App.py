@@ -43,7 +43,7 @@ def train():
 	examples_dir = request.args.get('examples_dir')
 	target_data_csv = './data.csv'
 	target_labels_csv = './labels.csv'
-	labels = collector.examine_samples(target_data_csv, target_labels_csv)
+	labels = collector.examine_samples(examples_dir, target_data_csv, target_labels_csv)
 
 	ret = {}
 	if(len(labels)==0):

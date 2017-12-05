@@ -2,7 +2,7 @@ import os
 import xlwt
 import csv
 
-def examine_samples(output_file, samples_dir):
+def examine_samples(samples_dir, output_file, output_data_file):
 	texts_col = []
 	labels_col = []
 	labels = []
@@ -18,8 +18,10 @@ def examine_samples(output_file, samples_dir):
 			# print("Text: ", text)
 			texts_col.append(text)
 			labels_col.append(sd)
-	print("Writing CSV file {}".format(output_file))
+	print("Writing Data CSV file {}".format(output_file))
 	write_csv_file(output_file, texts_col, labels_col)
+	print("Writing Labels CSV file {}".format(output_data_file))
+	write_lables_csv(output_data_file, labels)
 	return labels
 
 
@@ -62,5 +64,13 @@ def write_csv_file(filename, textList, labelAssignments):
 		fieldnames = ['text', 'label']
 		writer = csv.DictWriter(csvfile, fieldnames=fieldnames,delimiter=',', lineterminator='\n')
 
-		for i in range(0,len(textList)-1):	
+		for i in range(0,len(textList)):	
 			writer.writerow({'text':textList[i],'label':labelAssignments[i]})
+
+def write_lables_csv(filename, labels):
+	with open(filename, 'w') as csvfile:
+		fieldnames = ['label']
+		writer = csv.DictWriter(csvfile, fieldnames=fieldnames,delimiter=',', lineterminator='\n')
+
+		for i in range(0,len(labels)):	
+			writer.writerow({'label':labels[i]})
