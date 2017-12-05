@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -20,10 +22,16 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class DocumentClassificationWSHelper {
 	
-	private static final String CLASSIFY_ROUTE="/classify";
+	private static final String CLASSIFY_ROUTE="/classifyText";
 	private static final String CLASSIFY_PARAM="text";
 
 	private HttpHost i_targetHost = null;
@@ -59,13 +67,40 @@ public class DocumentClassificationWSHelper {
 		HttpResponse response = this.execute(get);
 		
 		String classification = this.extractClass(response);
-		//return classification;
-		return "movies";
+		return classification;
 	}
 	
 	private String extractClass(HttpResponse response){
-		//TODO: Figure out how to get classification from Response
-		return null;
+		String content = null;
+		HttpEntity responseEntity = response.getEntity();
+		if(responseEntity!=null) {
+		    try {
+				content = EntityUtils.toString(responseEntity);
+				JsonElement root = null;
+				try{
+					root = new JsonParser().parse(content);
+					JsonObject jObject = root.getAsJsonObject();
+					String status = jObject.get("status").toString();
+					if(!stripQuotes(status.toLowerCase().trim()).equalsIgnoreCase("success")){
+						String message = jObject.get("message").toString();
+						System.out.println("MESSAGE = "+message);
+						return "ERROR";
+					}
+						
+					String label = jObject.get("label").toString();
+					return stripQuotes(label);
+					
+				}catch(	JsonSyntaxException je){
+					System.out.println("BOOM");
+					System.out.println("Error parsing Json. Message: "+je.getMessage());
+					
+				}
+			} catch (ParseException | IOException e) {
+				e.printStackTrace();
+				return "neutral"; //return neutral
+			}
+		}
+		return content;
 	}
 	
 	private String buildClassifyURL(String host, String port){
@@ -131,5 +166,15 @@ public class DocumentClassificationWSHelper {
 			}
 		}
 		return null;
+	}
+	
+	private static String stripQuotes(String s){
+		if(s==null || s.length()==0)
+			return s;
+		String trimmed = s.trim();
+		if(trimmed.startsWith("\"") && trimmed.endsWith("\""))
+			return trimmed.substring(1, trimmed.length()-1);
+		return s;
+		
 	}
 }

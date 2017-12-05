@@ -71,8 +71,10 @@ def train_model(samples_file, categories_file):
     return "Finished Model Retraining."
 
 def lookup_category_from_number(number):
+    print("looking up category for {}".format(number))
     for row in labels:
         value = labels[row]
+        print("{} = {}".format(row, value))
         if value==number:
             return row
     return "unknown"

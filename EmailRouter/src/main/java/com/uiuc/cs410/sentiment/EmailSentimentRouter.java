@@ -40,6 +40,10 @@ public class EmailSentimentRouter {
 			List<Email> emails = router.checkForEmails();
 			logMessage("Received "+emails.size()+" emails.");
 			for(Email email: emails){
+				if(email.getText().equalsIgnoreCase("ERROR")){
+					logMessage("ERROR: Failed to read message with Subject "+email.getSubject()+". Skipping.");
+					continue;
+				}
 				logMessage("Processing email "+email.getId());
 				router.processEmail(email);
 			}

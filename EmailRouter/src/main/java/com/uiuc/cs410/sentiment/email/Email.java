@@ -78,6 +78,7 @@ public class Email {
     	Document doc = Jsoup.parse(htmlContent);
     	Element body = doc.select("body").first();
     	Elements paragraphs = body.select("p");
+    	
     	String text = "";
     	
     	for(Element p : paragraphs){
@@ -92,6 +93,27 @@ public class Email {
     			text+="\0";
     		text += p.text();
     	}
+    	
+    	//add any div text
+    	Elements divs = body.select("div");
+    	for(Element p : divs){
+    		if(text.length()>0)
+    			text+="\0";
+    		text += p.text();
+    	}
+    	
+    	if(paragraphs.size()==0)
+    		System.out.println("No paragraphs found!");
+    	if(tds.size()==0)
+    		System.out.println("No tds found!");
+    	if(divs.size()==0)
+    		System.out.println("No divs found!");
+    	if(paragraphs.size()==0 && tds.size()==0 && divs.size()==0){
+    		System.out.println("Uh oh! dumping HTML content");
+    		System.out.println(htmlContent);
+    	}
+    	if(text==null || text.length()==0)
+    		return "ERROR";
     	return text;
     }
 

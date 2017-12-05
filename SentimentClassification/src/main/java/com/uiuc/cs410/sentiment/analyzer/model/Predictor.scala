@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 class Predictor(context: SparkContext, method: String) {
-  val ModelPath = "E:/UIUC/CS498/Project/myModel"
   
   var model : NaiveBayesModel = null
   var predictionMethod = method;
