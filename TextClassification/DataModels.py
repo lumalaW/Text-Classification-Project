@@ -12,6 +12,7 @@ y = DataAnalysis.y
 print("Naive Bayes algorithm")
 from sklearn.naive_bayes import MultinomialNB
 NB = MultinomialNB()
+print(NB)
 NB.fit(X_train_dtm, y_train)
 
 # Predictions
@@ -29,6 +30,7 @@ print(confusion_matrix)
 print("Logistic Regression")
 from sklearn.linear_model import LogisticRegression
 logreg = LogisticRegression()
+print(logreg)
 logreg.fit(X_train_dtm, y_train)
 
 # Predictions
