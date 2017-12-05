@@ -81,7 +81,6 @@ public class SentimentClassifcationWSHelper {
 		if(responseEntity!=null) {
 		    try {
 				content = EntityUtils.toString(responseEntity);
-//				System.out.println(" Response from Web service "+content);
 				JsonElement root = null;
 				try{
 					root = new JsonParser().parse(content);
@@ -169,9 +168,9 @@ public class SentimentClassifcationWSHelper {
 	
 	private String mapSentiment(String doubleValue){
 		Double d = Double.parseDouble(doubleValue);
-		if(d>=3.25)
+		if(d>=3.0)
 			return LEVEL_VERY_POSITIVE;
-		if(d>2.25)
+		if(d>2.0)
 			return LEVEL_POSITIVE;
 		if(d<1.25)
 			return LEVEL_NEGATIVE;
