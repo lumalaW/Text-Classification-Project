@@ -16,7 +16,7 @@ import com.uiuc.cs410.sentiment.ws.SentimentClassifcationWSHelper;
 
 public class EmailSentimentRouter {
 
-	private long waitTime = 10000;
+	//private long waitTime = 10000;
 	
 	private GoogleMailAPIHelper mailHelper = null;
 	private PropertyHandler propertyHandler = null;
@@ -47,7 +47,7 @@ public class EmailSentimentRouter {
 				logMessage("Processing email "+email.getId());
 				router.processEmail(email);
 			}
-			router.waitForInterval(router.waitTime);
+			router.waitForInterval(router.getWaitTime()*1000);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class EmailSentimentRouter {
 		
 		this.propertyHandler = new PropertyHandler();
 		
-		String mailUser = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_USER);
+		String mailUser = "me";
 		String secretPath = this.propertyHandler.getProperty(PropertyHandler.GOOGLE_MAIL_SECRET_FILE);
 		this.mailHelper = new GoogleMailAPIHelper(mailUser, secretPath);
 		
@@ -161,5 +161,13 @@ public class EmailSentimentRouter {
 	
 	private static void logMessage(String message){
 		System.out.println(message);
+	}
+	
+	private long getWaitTime(){
+		long waitTimeSeconds = 10;
+		String waitTimeProperty = propertyHandler.getProperty(PropertyHandler.WAIT_TIME);
+		if(waitTimeProperty!=null)
+			waitTimeSeconds = Long.parseLong(waitTimeProperty);
+		return waitTimeSeconds;
 	}
 }
