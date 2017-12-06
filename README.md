@@ -4,6 +4,7 @@ EmailRouter is a utility that seeks to expedite the process of monitoring and ro
 both the topic categorization of the email as well as the sentiment of the email's author. Essentially, using the Stanford CoreNLP library
 to perform sentiment analysis on text and the Scikit-learn to classify the text, we use the rules engine to decide to whom an email should
 be routed to.
+
 To perform topic categorization, users must provide the tool  of the tool may define 
 
 ## Sentiment Classification Service
@@ -23,13 +24,23 @@ categorized automatically before being forwarded to the right person.
 The text data was vectorized before it was used for training and testing the algorithms. The vectorization (count vectorization) entailed getting the
 number of times a unique word appeared in an example. Different metrics were used to judge the algorithms; Classification accuracy (i.e what percentage
 of the examples were corrected classified?), Confusion matrix and Cross-validation. The Confusion matrix is an N by N matrix where N is the number of
-categories with each row representing ** and column representing **. This matrix is used to show mre details about the classification accuracy.
-Cross-validation has an added advantage of using each example in the data set for both training and testing.
+categories. This is useful as it shows the number of correct and incorrect predictions made by the model compared to the actual outcomes (target value).
+This matrix is used to show mre details about the classification accuracy. Cross-validation has an added advantage of using each example in the data set for both
+training and testing.
 
-The only features used were the words in the text i.e. the number of times a unique term appeared in a text example. The vectorization was done into differnt
+The only features used were the words in the text i.e. the number of times a unique term appeared in a text example. The vectorization was done in two different
+ways. For the Cross-validation metrics, since all the examples are used for both training and testing the algorithms, the vectorization was done for all the examples.
+For the Classification Accuracy metrics, only the training data was vectorized. This was done because real world applications of text classification expect to see
+words in the data that were not seen in the training process.
 
-For the first trial, the data was split into training and test data.75 examples were was to train the model and 25 were used to test the algorithms. Classification accuracy was used to
-determine which algorithm performed better.
+For the first trial, the data was split into training and test data.75 examples were was to train the model and 25 were used to test the algorithms.
+Classification accuracy was used to determine which algorithm performed better. Logistic Regression performed slightly better as it 96% correct compared to
+92% by Naive Bayes. An example of a confusion matrix is shown below. It shows that 
+[[3 0 0 1]
+ [0 6 0 0]
+ [0 0 7 0]
+ [0 0 1 7]]
+
 
 ### Algorithm selection
 
