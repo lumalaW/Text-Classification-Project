@@ -33,14 +33,17 @@ ways. For the Cross-validation metrics, since all the examples are used for both
 For the Classification Accuracy metrics, only the training data was vectorized. This was done because real world applications of text classification expect to see
 words in the data that were not seen in the training process.
 
-For the first trial, the data was split into training and test data.75 examples were was to train the model and 25 were used to test the algorithms.
+For the first trial, the data was split into training and test data. 75 examples were was to train the model and 25 were used to test the algorithms.
 Classification accuracy was used to determine which algorithm performed better. Logistic Regression performed slightly better as it 96% correct compared to
-92% by Naive Bayes. An example of a confusion matrix is shown below. It shows that 
-[[3 0 0 1]
- [0 6 0 0]
- [0 0 7 0]
- [0 0 1 7]]
+92% by Naive Bayes. Using the confusion matrix (not shown) we can see which category(s) were most misclassified.
 
+For the second trial, stop words were removed. There was an improvement in both of the algorithms as the classified all the test examples correctly.
+
+For the third trial, the vectorizer used also took into consideration the type of terms (frequent or rare). A Term Frequency - Inverse Document Frequency (TF-IDF)
+vectorizer was used. The performance declined in this trial to a classification accuracy of 92% for both algorithms.
+
+The last run did not change the data but rather the metrics used to measure the performance of each algorithm. The Cross-validation measurement was used
+and both algorithm had the same performance on each of the 10 folds and hence the same average of 97.9%
 
 ### Algorithm selection
 
