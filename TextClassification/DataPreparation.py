@@ -1,14 +1,14 @@
 # This file contains methods that are used to prepare the text data
-# Method to get the stop words from the file
 array = []
+
+# Method to get the stop words from a file containing stop words
 with open("stopwords.txt", "r") as ins:
     for line in ins:
         line = line.rstrip('\n')
         array.append(line)
 
+
 # Method to remove stop words when given a String
-
-
 def remove_stop_words(text):
     text_words = text.split()
     result_words = [word for word in text_words if word.lower() not in array]

@@ -1,6 +1,8 @@
-# Building and evaluating models
+# A class to build and evaluate different models.
+# The two models evaluated are thr Naive Bayes algorithm and the Logistic Regression algorithm.
 from TextClassification import DataAnalysis
 
+# Import the training and testing data
 X_train_dtm = DataAnalysis.X_train_dtm
 y_train = DataAnalysis.y_train
 X_test_dtm = DataAnalysis.X_test_dtm
@@ -12,16 +14,16 @@ y = DataAnalysis.y
 print("Naive Bayes algorithm")
 from sklearn.naive_bayes import MultinomialNB
 NB = MultinomialNB()
-print(NB)
+print(NB)  # Get the parameters
 NB.fit(X_train_dtm, y_train)
 
-# Predictions
+# Predict the test data
 y_predictions = NB.predict(X_test_dtm)
 
-# Accuracy
+# Metrics for
 from sklearn import metrics
 classification_accuracy = metrics.accuracy_score(y_test, y_predictions)
-print(classification_accuracy)
+print("Naive Bayes: Classification accuracy" + str(classification_accuracy))
 
 confusion_matrix = metrics.confusion_matrix(y_test, y_predictions)
 print(confusion_matrix)
@@ -36,7 +38,7 @@ logreg.fit(X_train_dtm, y_train)
 # Predictions
 y_predictions = logreg.predict(X_test_dtm)
 
-# Accuracy
+# Metrics for Logistic regression
 classification_accuracy = metrics.accuracy_score(y_test, y_predictions)
 print(classification_accuracy)
 
