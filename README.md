@@ -11,7 +11,7 @@ To perform topic categorization, users must provide the tool  of the tool may de
 
 The Sentiment Classification Microservices is built upon existing technology developed by Stanford’s NLP group.
 
-https://nlp.stanford.edu/
+	https://nlp.stanford.edu/
 
 The Stanford CoreNLP library performs multiple Natural Language Processing tasks on the text from each email such as Parts of Speech tagging and Entity Extraction, then uses a Recurrent Neural Network (RNN) to provide Sentiment Analysis from a model that as been pretrained at Stanford.
 EmailRouter invokes the CoreNLP library via a custom RESTful microservice built upon the Apache Spark framework.
@@ -116,8 +116,9 @@ Follow the instructions to enable access to your Gmail Account:
 
 2. Generate a Credential to Access Application Data.
 
-Download the generated client_id.json file and save it for later use.
-Provide EmailRouter with access to the Credential by providing the path to your Secret Key file in EmailRouter’s configuration files.
+- Download the generated client_id.json file and save it for later use.
+
+- Provide EmailRouter with access to the Credential by providing the path to your Secret Key file in EmailRouter’s configuration files.
 
 
 ## Configuration
