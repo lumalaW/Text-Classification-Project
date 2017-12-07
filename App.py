@@ -37,7 +37,7 @@ def classifyText():
 	return json.dumps(ret)
 
 
-@app.route('/train', methods=['POST'])
+@app.route('/train', methods=['GET','POST'])
 def train():
 	examples_dir = request.args.get('examples_dir')
 	target_data_csv = './data.csv'

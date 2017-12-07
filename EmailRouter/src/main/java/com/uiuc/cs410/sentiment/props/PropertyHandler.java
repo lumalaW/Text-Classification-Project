@@ -26,8 +26,9 @@ public class PropertyHandler {
 	public static final String LIST_CC="cclist";
 	public static final String LIST_BCC="bcclist";
 	
-	public static final String GOOGLE_MAIL_USER = "inbox.user";
+	//public static final String GOOGLE_MAIL_USER = "inbox.user";
 	public static final String GOOGLE_MAIL_SECRET_FILE = "inbox.secret.file.path";
+	public static final String WAIT_TIME ="inbox.check.inverval";
 	
 	public static final String SERVICE_SENT_CLASS_HOST = "service.sentiment.host";
 	public static final String SERVICE_SENT_CLASS_PORT = "service.sentiment.port";
