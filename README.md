@@ -24,7 +24,7 @@ Today Amazon’s problem set is diverse, but their customers may not be precise 
 
 The EmailRouter currently supports the monitoring of Google Mail inboxes, and performs mail operations via the Google Mail API.
 
-	[Developer Documentation for Google Mail API](https://developers.google.com/gmail/api/)
+- [Developer Documentation for Google Mail API](https://developers.google.com/gmail/api/)
 
 In a production environment it is unlikely that the target user of EmailRouter will prefer Google Mail as their organization’s email provider.  
 
@@ -51,7 +51,7 @@ For the purposes of this demo the Google Mail service is preferred due to it pro
 
 The Sentiment Classification Microservices is built upon existing technology developed by Stanford’s NLP group.
 
-	[Home page for NLP Group at Stanford](https://nlp.stanford.edu/)
+- [Home page for NLP Group at Stanford](https://nlp.stanford.edu/)
 
 The Stanford CoreNLP library performs multiple Natural Language Processing tasks on the text from each email such as Parts of Speech tagging and Entity Extraction, then uses a Recurrent Neural Network (RNN) to provide Sentiment Analysis from a model that as been pretrained at Stanford.
 EmailRouter invokes the CoreNLP library via a custom RESTful microservice built upon the Apache Spark framework.
@@ -167,7 +167,7 @@ Building and the Service:
 - Generate a Secret Key File
 Follow the instructions to enable access to your Gmail Account: 
 	
-	[Interactive Wizard for Generating Secret Key File](https://console.developers.google.com/flows/enableapi?apiid=gmail) 
+- [Interactive Wizard for Generating Secret Key File](https://console.developers.google.com/flows/enableapi?apiid=gmail) 
 
 2. Generate a Credential to Access Application Data.
 
