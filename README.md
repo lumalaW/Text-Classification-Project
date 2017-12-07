@@ -20,12 +20,19 @@ Today Amazon’s problem set is diverse, but their customers may not be precise 
 
 ## Architecture
 
-- The Email Router is a stand alone Java application that depends on two custom Microservices to perform classification.  The Document Classification Service performs text classification to predict the email type from a user defined set of categories.  The Sentiment Classification Service scores the sentiment of the author when writing the email, and grades the sentiment on a scale from Very Negative to Very Positive. 
+ The Email Router is a stand alone Java application that depends on two custom Microservices to perform classification.  The Document Classification Service performs text classification to predict the email type from a user defined set of categories.  The Sentiment Classification Service scores the sentiment of the author when writing the email, and grades the sentiment on a scale from Very Negative to Very Positive. 
 
-We also use Google Mail API
+The EmailRouter currently supports the monitoring of Google Mail inboxes, and performs mail operations via the Google Mail API.
+
+	https://developers.google.com/gmail/api/
+
+In a production environment it is unlikely that the target user of EmailRouter will prefer Google Mail as their organization’s email provider.  
+
+For the purposes of this demo the Google Mail service is preferred due to it providing its services free of charge, and because of it’s readily available developer APIs.  When put into production, EmailRouter could easily be extended to support other mail services with only minor modifications.
+
 
 <div align="center">
-  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/demo.gif"><br><br>
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/arch.png"><br><br>
 </div>
 
 ## Processing and Email
@@ -53,11 +60,11 @@ Each sentence is graded on a scale from Very Negative to Very Positive, and the 
 
 Once deployed, the stateless service provides a classify() method to score the text provided, and returns the results as a JSON object.
 
-Request: 
+#### Request: 
 
 	GET http://localhost:4567/classify&text=‘Im+very+angry+with+my+service!+Call+me!’
 
-Request: 
+#### Response: 
 
 	{
 		score: 1.5,
@@ -75,6 +82,21 @@ essentially supervised learning. This labeled data (in the form of a csv file) c
 split into four categories with 25 examples per category. The four categories included; Hotel Review, Movie Review, Product Review and Restaurant Review.
 Our assumption was that the company X had four major kinds of businesses and would like their emails from customers or business partners to be
 categorized automatically before being forwarded to the right person.
+
+Once deployed, the stateless service provides a classifyText() method to score the text provided, and returns the results as a JSON object.
+
+#### Request: 
+
+	GET http://localhost:5000/classifyText?text=Try+the+hamburger!+Its+huge!
+
+#### Response: 
+
+	{
+		"status": "success",
+		"message": "Classification successful", 
+		"label": "restaurant“
+	}
+
 
 ### The training process
 The text data was vectorized before it was used for training and testing the algorithms. The vectorization (count vectorization) entailed getting the
@@ -245,3 +267,8 @@ From the EmailRouter directory of your local Repository, run the command:
 
 
 ## Example Usage
+
+For a full demo of the product, please watch our presentation video here:
+
+	https://youtu.be/2ETgns9Nl_8
+
