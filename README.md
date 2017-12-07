@@ -234,16 +234,20 @@ Modify the general.properties file
 ### Rebuilding Building the Tool
 
 #### Building the Sentiment Classifier Service
-- Java 1.8 JDK
-- Apache Maven
+
+From the SentimentClassification directory of your local Repository, run the command:
+
+	mvn clean package (NOTE: This may take a long time while downloading dependencies.)
 
 #### Building the Document Classification Service
 
 - The Document Classification Service does not require compilation.
 
 #### Building EmailRouter Program
-- Java 1.8 JDK
-- Gradle 2+
+
+From the EmailRouter directory of your local Repository, run the command:
+
+	gradle build
 
 ### Running the Sentiment Classifier Service
 
@@ -263,7 +267,7 @@ From the TextClassification directory of your local Repository run the command:
 
 From the EmailRouter directory of your local Repository, run the command:
 
-	gradle build run
+	gradle run
 
 
 ## Example Usage
