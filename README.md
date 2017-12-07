@@ -9,6 +9,26 @@ To perform topic categorization, users must provide the tool  of the tool may de
 
 ## Sentiment Classification Service
 
+The Sentiment Classification Microservices is built upon existing technology developed by Stanford’s NLP group.
+
+https://nlp.stanford.edu/
+
+The Stanford CoreNLP library performs multiple Natural Language Processing tasks on the text from each email such as Parts of Speech tagging and Entity Extraction, then uses a Recurrent Neural Network (RNN) to provide Sentiment Analysis from a model that as been pretrained at Stanford.
+EmailRouter invokes the CoreNLP library via a custom RESTful microservice built upon the Apache Spark framework.
+
+Each sentence is graded on a scale from Very Negative to Very Positive, and the scores are averaged to calculate the overall sentiment of the Email.
+
+Once deployed, the stateless service provides a classify() method to score the text provided, and returns the results as a JSON object.
+
+Request: 
+	GET http://localhost:4567/classify&text=‘Im+very+angry+with+my+service!+Call+me!’
+Request: 
+	{
+		score: 1.5,
+		text: “I’m very angry with my service! Call me!”
+	}
+
+
 ## Document Classification Service
 The text classification was done using the Scikit-learn library. Initially released in 2007, Scikit-learn is a free software machine learning
 library for the Python programming language. For this project, the Naive Bayes (multinomial) algorithm was used. For the purpose of text
@@ -49,18 +69,60 @@ and both algorithm had the same performance on each of the 10 folds and hence th
 The Naive Bayes algorithm was chosen in the end because it is simple (relies on counting the number of words and using conditional probabilities) and
 it converges faster than discriminative models like logistic regression, so you need less training data. Essentially, it is fast and performs really
 well.
+
 ### Training the Service
+
+By default, the Document Classification Service has been trained over example sample provided by our team.
+
+To customize the Service to suit your organization’s needs you must collect examples of the emails that you’d like the service to recognize and classify.
+
+At minimum, the Document Classification Service requires 25 examples of each unique email classification, however providing significantly more examples is highly recommended and will increase classification accuracy. 
+
+Collect these example and separate them into category folders.  The name of each folder will serve as the class type for all documents inside. The name is not important for the examples inside each folder.
+
+Once an adequate number of samples have been collected for every category of email, make sure the Document Training Service has been started and call the train method to retrain.
+
+From a web browser or a RESTful web service utility such as Postman, run the following request:
+
+	http://<HOST>:<PORT>/train?examples_dir=<PATH>
+
+Where HOST is the system that your service that the service is running on, PORT is the correct port for the service, and PATH is the location of the examples to train on.
+
+	Example:  http://localhost:5000/train?examples_dir=./examples
+
+If the service trains successfully, a message similar to this one will be returned.  The labels field contains a set of categories that the service now recognizes.  Save this information for later.
+
+	{"labels": ["hotel", "movie", "product", "restaurant"], "message": "Finished Model Retraining."}
 
 
 ## Google Mail API Integration
+
+Building and the Service:
+1. Create a Gmail Account
+-This will be both the account that is monitored by EmailRouter, and the account used to forward emails.
+Make sure the Browser is logged into this Gmail account at all times.
+
+-Generate a Secret Key File
+Follow the instructions to enable access to your Gmail Account: https://console.developers.google.com/flows/enableapi?apiid=gmail 
+
+2. Generate a Credential to Access Application Data.
+
+Download the generated client_id.json file and save it for later use.
+Provide EmailRouter with access to the Credential by providing the path to your Secret Key file in EmailRouter’s configuration files.
+
 
 ## Configuration
 
 ### Configuring of Mail Lists
 
-EmailRouter allows for the configuration of 
+For each Email Category, configure a <CATEGORY>.properties file where CATEGORY is the name of the Email class you expect to be returned from the Document Classification Service.
 
-https://github.com/lumalaW/Text-Classification-Project/blob/master/images/email_lists.png
+Within each file you may define a different email list for every sentiment type returned by the Sentiment Classification Service.  
+
+Supported Sentiment Types are: angry, negative, neutral, positive, very_positive
+
+For each sentiment level you may define a To, Cc, and Bcc list.  
+
 
 <div align="center">
   <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/email_lists.png"><br><br>
@@ -69,9 +131,33 @@ https://github.com/lumalaW/Text-Classification-Project/blob/master/images/email_
 
 ### Port Configuration
 
+Configure the EmailRouter Properties to Suit Your Organization's Needs.  From the EmailRouter/conf directory:
+
+Modify the general.properties file
+
+- Provide the Host and Port to both services
+
+- Provide the path to your client_id file
+
+- (OPTIONAL) Change the wait interval for email checks.
+
 ## Launching the Tool
 
 ### Prerequisites.
+
+####  Sentiment Classifier Service Prerequisites
+- Java 1.8 JDK
+- Apache Maven
+
+#### Document Classification Service Prerequisites
+- Python 3
+- Scikit-learn
+- Flask
+- Pandas
+
+#### EmailRouter Program Prerequisites
+- Java 1.8 JDK
+- Gradle 2+
 
 ## Rebuilding Building the Tool
 
