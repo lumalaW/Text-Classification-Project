@@ -1,11 +1,44 @@
 # Text-Classification-Project
 
-EmailRouter is a utility that seeks to expedite the process of monitoring and routing of customer emails to interested parties according to
-both the topic categorization of the email as well as the sentiment of the email's author. Essentially, using the Stanford CoreNLP library
-to perform sentiment analysis on text and the Scikit-learn to classify the text, we use the rules engine to decide to whom an email should
-be routed to.
+Large Businesses and Non-Profit Organizations often have several different products, and therefore they often service many different sets of customers.  These disparate customer sets often experience very different types of problems from one another, and each group brings unique questions to the Business’s Customer Service department via Email.  
 
-To perform topic categorization, users must provide the tool  of the tool may define 
+In this scenario, it is not feasible for a single employee of the Business to service the wide range of requests that are coming from the customer base, and some requests must be delegated to other employees who specialize in each area. 
+
+Today this is often a manual process.  A human must manually triage each incoming Email, examine it for content, and forward it to the appropriate owner.
+
+Our EmailRouter utility intends to remove this friction by Automating the triage and routing process using both Text and Sentiment Classification.
+
+Example Use Case of EmailRouter : Amazon.com
+
+Despite starting its life as a simple online book store, Amazon.com has quickly diversified its business both through acquisition and through internal entrepreneurship. 
+
+Today Amazon’s problem set is diverse, but their customers may not be precise when directing their complaint and questions. 
+
+<div align="center">
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/amazon.gif"><br><br>
+</div>
+
+## Architecture
+
+- The Email Router is a stand alone Java application that depends on two custom Microservices to perform classification.  The Document Classification Service performs text classification to predict the email type from a user defined set of categories.  The Sentiment Classification Service scores the sentiment of the author when writing the email, and grades the sentiment on a scale from Very Negative to Very Positive. 
+
+We also use Google Mail API
+
+<div align="center">
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/demo.gif"><br><br>
+</div>
+
+## Processing and Email
+
+- EmailRouter continuously polls the Google Inbox to check for Unread emails.
+- When a new email is found, EmailRouter extracts the text from the email body and forwards it for classification.
+- Our two microservices inspect the email text, and return scores to EmailRouter.
+- EmailRouter looks up To:, CC: and BCC: distribution lists for the Catagory and Sentminent of the email.
+- EmailRouter uses the Google Mail API to distribute the email to all addresses on the list. 
+
+<div align="center">
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/demo.gif"><br><br>
+</div>
 
 ## Sentiment Classification Service
 
