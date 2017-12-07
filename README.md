@@ -1,4 +1,4 @@
-# Text-Classification-Project
+# EmailRouter with Classification
 
 Large Businesses and Non-Profit Organizations often have several different products, and therefore they often service many different sets of customers.  These disparate customer sets often experience very different types of problems from one another, and each group brings unique questions to the Business’s Customer Service department via Email.  
 
