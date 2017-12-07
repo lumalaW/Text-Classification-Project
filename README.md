@@ -21,8 +21,11 @@ Each sentence is graded on a scale from Very Negative to Very Positive, and the 
 Once deployed, the stateless service provides a classify() method to score the text provided, and returns the results as a JSON object.
 
 Request: 
+
 	GET http://localhost:4567/classify&text=‘Im+very+angry+with+my+service!+Call+me!’
+
 Request: 
+
 	{
 		score: 1.5,
 		text: “I’m very angry with my service! Call me!”
@@ -80,6 +83,10 @@ At minimum, the Document Classification Service requires 25 examples of each uni
 
 Collect these example and separate them into category folders.  The name of each folder will serve as the class type for all documents inside. The name is not important for the examples inside each folder.
 
+<div align="center">
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/TrainingDocs.png"><br><br>
+</div>
+
 Once an adequate number of samples have been collected for every category of email, make sure the Document Training Service has been started and call the train method to retrain.
 
 From a web browser or a RESTful web service utility such as Postman, run the following request:
@@ -99,11 +106,13 @@ If the service trains successfully, a message similar to this one will be return
 
 Building and the Service:
 1. Create a Gmail Account
--This will be both the account that is monitored by EmailRouter, and the account used to forward emails.
-Make sure the Browser is logged into this Gmail account at all times.
 
--Generate a Secret Key File
-Follow the instructions to enable access to your Gmail Account: https://console.developers.google.com/flows/enableapi?apiid=gmail 
+- This will be both the account that is monitored by EmailRouter, and the account used to forward emails. Make sure the Browser is logged into this Gmail account at all times.
+
+- Generate a Secret Key File
+Follow the instructions to enable access to your Gmail Account: 
+	
+	https://console.developers.google.com/flows/enableapi?apiid=gmail 
 
 2. Generate a Credential to Access Application Data.
 
@@ -117,15 +126,18 @@ Provide EmailRouter with access to the Credential by providing the path to your 
 
 For each Email Category, configure a <CATEGORY>.properties file where CATEGORY is the name of the Email class you expect to be returned from the Document Classification Service.
 
+<div align="center">
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/email_lists.png"><br><br>
+</div>
+
 Within each file you may define a different email list for every sentiment type returned by the Sentiment Classification Service.  
 
 Supported Sentiment Types are: angry, negative, neutral, positive, very_positive
 
 For each sentiment level you may define a To, Cc, and Bcc list.  
 
-
 <div align="center">
-  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/email_lists.png"><br><br>
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/distList.png"><br><br>
 </div>
 
 
@@ -140,6 +152,10 @@ Modify the general.properties file
 - Provide the path to your client_id file
 
 - (OPTIONAL) Change the wait interval for email checks.
+
+<div align="center">
+  <img src="https://github.com/lumalaW/Text-Classification-Project/blob/master/images/properties.png"><br><br>
+</div>
 
 ## Launching the Tool
 
@@ -159,6 +175,39 @@ Modify the general.properties file
 - Java 1.8 JDK
 - Gradle 2+
 
-## Rebuilding Building the Tool
+### Rebuilding Building the Tool
+
+#### Building the Sentiment Classifier Service
+- Java 1.8 JDK
+- Apache Maven
+
+#### Building the Document Classification Service
+
+- The Document Classification Service does not require compilation.
+
+#### Building EmailRouter Program
+- Java 1.8 JDK
+- Gradle 2+
+
+### Running the Sentiment Classifier Service
+
+From the SentimentClassification directory of your local Repository run the command:
+
+	java –jar target/SentimentAnalyzer-1.0.jar
+
+
+### Running the Document Classification Service
+
+From the TextClassification directory of your local Repository run the command:
+
+	python ../App.py
+
+
+### Running the EmailRouter Program
+
+From the EmailRouter directory of your local Repository, run the command:
+
+	gradle build run
+
 
 ## Example Usage
