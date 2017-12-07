@@ -43,10 +43,12 @@ For the third trial, the vectorizer used also took into consideration the type o
 vectorizer was used. The performance declined in this trial to a classification accuracy of 92% for both algorithms.
 
 The last run did not change the data but rather the metrics used to measure the performance of each algorithm. The Cross-validation measurement was used
-and both algorithm had the same performance on each of the 10 folds and hence the same average of 97.9%
+and both algorithm had the same performance on each of the 10 folds and hence the same average of 97.9%.
 
 ### Algorithm selection
-
+The Naive Bayes algorithm was chosen in the end because it is simple (relies on counting the number of words and using conditional probabilities) and
+it converges faster than discriminative models like logistic regression, so you need less training data. Essentially, it is fast and performs really
+well.
 ### Training the Service
 
 
